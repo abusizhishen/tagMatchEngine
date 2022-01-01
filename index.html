@@ -16,7 +16,10 @@
     <ul></ul>
   </div>
   <div id="right">
-    <ul  ondrop="drop(event)" ondragover="allowDrop(event)"></ul>
+    <div class="tag">
+      <ul class="tag-ul" ondrop="drop(event)" ondragover="allowDrop(event)" onchange="ulChange()" ondragenter="dragenter(event)" ondragleave="dragleave(event)"></ul>
+    </div>
+    <textarea disabled  id="json"></textarea>
   </div>
 </div>
 <div id="footer">footer</div>
