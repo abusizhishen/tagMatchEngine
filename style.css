@@ -56,18 +56,29 @@ body html{
 
 .tag {
   height:100%;
-  width:48%;
-  background-color: navajowhite;
+  width:60%;
+  /*background-color: greenyellow;*/
   border:1px solid;
-  flex:1
+  flex:2
+}
+
+#showJson{
+  height:100%;
+  width:auto;
+  /*background-color: navajowhite;*/
+  /*border:1px solid;*/
+  flex:1 ;
+  overflow:auto;
+
 }
 
 #json{
+  /*background-color: navajowhite;*/
+  /*border:1px solid;*/
   height:100%;
-  width:48%;
-  background-color: navajowhite;
-  border:1px solid;
-  flex:2
+  width: 100%;
+  overflow:auto;
+
 }
 
 .li-dir {
@@ -93,7 +104,20 @@ ul {
 
 .tag-ul{
   width:100%;
-  height:99%;
+  height:100%;
   overflow:auto;
 
+  padding:10px;
+}
+
+.unselectable {
+  /*-moz-user-select: -moz-none;*/
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+ul > li{
+  padding:3px;
 }

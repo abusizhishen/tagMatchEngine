@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>标签匹配引擎</title>
   <link rel="stylesheet" href="style.css">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="js.js"></script>
 </head>
@@ -16,10 +15,19 @@
     <ul></ul>
   </div>
   <div id="right">
-    <div class="tag">
-      <ul class="tag-ul" ondrop="drop(event)" ondragover="allowDrop(event)" onchange="ulChange()" ondragenter="dragenter(event)" ondragleave="dragleave(event)"></ul>
+    <div class="tag" wrap="off">
+      <ul class="tag-ul" wrap="off"
+          ondrop="drop(event)"
+          ondragover="allowDrop(event)"
+          onchange="ulChange()"
+          ondragenter="dragenter(event)"
+          ondragleave="dragleave(event)"
+      ></ul>
     </div>
-    <textarea disabled  id="json"></textarea>
+    <div id="showJson">
+      <textarea disabled  id="json" wrap="off"></textarea>
+
+    </div>
   </div>
 </div>
 <div id="footer">footer</div>

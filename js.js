@@ -33,7 +33,7 @@ function setCalculateSymbol() {
 function setTagType() {
   return `
 <li>数据类型
-<select name="type">
+<select name="type" >
 <option ></option>
 <option value="int">int</option>
 <option value="string">string</option>
@@ -43,7 +43,11 @@ function setTagType() {
 }
 
 function setValue(){
-  return '<li>值<input type="text"></li>'
+  return '<li class="value">值<input type="text"></li>'
+}
+
+function subTags(){
+  return '<li class="subTags">子规则<ul></ul></li>'
 }
 
 var menu = [
@@ -101,7 +105,7 @@ function setTags(menu, ele) {
       ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='` + node.name + '|' + node.tag + `'>` + node.name + '</li>')
       continue
     } else {
-      ele.append('<li class="li-dir">' + node.name + '</li>')
+      ele.append('<li class="li-dir unselectable">' + node.name + '</li>')
     }
 
     ele.append('<ul class="sidebar "></ul>')
@@ -116,12 +120,15 @@ $("document").ready(function () {
 });
 
 function allowDrop(ev) {
+  if (!checkAllowDrop(ev)){
+    return false
+  }
+
   ev.preventDefault();
 }
 
 function drop(ev) {
   ev.preventDefault();
-  console.log(  ev.target)
   $(  ev.target).css({"border":""})
   var str = ev.dataTransfer.getData("value");
 
@@ -129,20 +136,25 @@ function drop(ev) {
   name=data[0]
   tag = data[1]
   elems = `
-    ${name} <p hidden>${tag}</p><div class="del" onclick="delLi(this)">删除</div><ul>`
+    ${name} <p hidden>${tag}</p><div class="del" onclick="delLi(this)">删除</div><ul draggable="true">`
     + getLogicRelation()
     + setCalculateSymbol()
     + setTagType()
     + setValue()
+    + subTags()
     +"</ul>"
-  $(ev.target).append(`
-<li
-ondrop="drop(event)"
-ondragover="allowDrop(event)"
-ondragenter="dragenter(event)"
-ondragleave="dragleave(event)"
-class="item"
-> ${elems} </li>`);
+  switch (ev.target.className){
+    case "subTags":
+      let subTags = $(ev.target)
+      $(subTags.children()[0]).append(`<li> ${elems} </li>`);
+      break
+    case "tag-ul":
+      $(ev.target).append(`<li> ${elems} </li>`);
+    break;
+    default:
+      console.log(ev.target.className)
+  }
+
 
   ulChange()
 }
@@ -166,40 +178,49 @@ function ulChange() {
     jsonDiv.value = '[]'
     return
   }
+
+  result = getChildrenTags(lis)
+
+  jsonDiv.val(JSON.stringify(result, null, 2));
+}
+
+function getChildrenTags(lis) {
   var result = [];
 
   for (i = 0; i < lis.length; i++) {
     li = $(lis[i])
     children = li.children()
     var tag = children[0].innerText
-    console.log(tag)
     var ul = children[2]
     var fields = $(ul).children()
     var fieldIdx = 0
 
-    console.log(fields)
-    item = {
+    var item = {
       tag: tag,
       logic: getLiTagFieldValue(fields[fieldIdx++]),
       symbol: getLiTagFieldValue(fields[fieldIdx++]),
       type: getLiTagFieldValue(fields[fieldIdx++]),
       value: getLiTagFieldValue(fields[fieldIdx++]),
+      subTags: []
     }
 
-    //console.log(item)
-    //console.log(li)
+    li = $(fields[fieldIdx])
+    subUl = $(li).children()[0]
+    lis = $(subUl).children()
+    if (lis.length){
+      item.subTags = getChildrenTags(lis)
+    }
 
     result.push(item)
   }
 
-  jsonDiv.val(JSON.stringify(result, null, 2));
-}
-
-function getChildrenTags() {
-
+  return result
 }
 
 function dragenter(ev) {
+  if (!checkAllowDrop(ev)){
+    return false
+  }
   ev.preventDefault();
   $(  ev.target).css({"border":"solid red 1px"})
 }
@@ -212,4 +233,14 @@ function dragleave(ev) {
 
 function getLiTagFieldValue(li) {
   return $(li).children()[0].value
+}
+
+function checkAllowDrop(ev) {
+  switch (ev.target.className){
+    case "subTags"  :
+    case "tag-ul":
+      return true
+    default:
+      return false;
+  }
 }
