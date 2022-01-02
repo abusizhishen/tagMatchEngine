@@ -1,8 +1,28 @@
 $(document).on('click', 'li', function () {
-  target = $(this).next();
+  var target = $(this).next();
   if (target && target.is('ul')) {
     $(target).toggle();
+    return false;
   }
+
+  var children = $(this).children()
+  //console.log(this.innerText)
+  if (children.length=== 0) {
+    return false;
+  }
+
+  switch (children[0].tagName) {
+    case "P":
+      $(children[2]).toggle()
+      break;
+    case "UL":
+      $(children[0]).toggle()
+      break
+    default:
+      console.log(children[0].tagName)
+  }
+
+  return false
 })
 
 
@@ -102,10 +122,10 @@ function setTags(menu, ele) {
 
   for (node of menu) {
     if (node.sub.length === 0) {
-      ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='` + node.name + '|' + node.tag + `'>` + node.name + '</li>')
+      ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='${node.name}|${node.tag}'><i class=""></i><span>${node.name}</span></span></li>`)
       continue
     } else {
-      ele.append('<li class="li-dir unselectable">' + node.name + '</li>')
+      ele.append(`<li class="li-dir unselectable"> ${node.name} </li>`)
     }
 
     ele.append('<ul class="sidebar "></ul>')
@@ -149,7 +169,7 @@ function drop(ev) {
       $(subTags.children()[0]).append(`<li> ${elems} </li>`);
       break
     case "tag-ul":
-      $(ev.target).append(`<li> ${elems} </li>`);
+      $(ev.target).append(`<li class="tag"> ${elems} </li>`);
     break;
     default:
       console.log(ev.target.className)
