@@ -118,6 +118,13 @@ ul > li{
   text-indent: 1em;
 }
 
+li{
+  list-style-type: none;
+  text-indent: 1em;
+}
+
+
+
 .li-open {
   list-style-type: none;
   background: url("icon/open.png") no-repeat 0rem 0.2rem;

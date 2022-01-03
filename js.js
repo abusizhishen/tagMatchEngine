@@ -7,7 +7,7 @@ $(document).on('click', 'li', function () {
 
   var children = $(this).children()
   //console.log(this.innerText)
-  if (children.length=== 0) {
+  if (children.length === 0) {
     return false;
   }
 
@@ -29,10 +29,10 @@ $(document).on('click', 'li', function () {
 
 function ulOpenOrClose(target) {
   console.log(target.classList)
-  if (target.classList.contains("li-open")){
+  if (target.classList.contains("li-open")) {
     target.classList.remove("li-open")
     target.classList.add("li-close")
-  }else{
+  } else {
     target.classList.remove("li-close")
     target.classList.add("li-open")
   }
@@ -75,11 +75,11 @@ function setTagType() {
 </li>`;
 }
 
-function setValue(){
+function setValue() {
   return '<li class="value">值<input type="text"></li>'
 }
 
-function subTags(){
+function subTags() {
   return '<li class="subTags li-open">子规则<ul></ul></li>'
 }
 
@@ -153,7 +153,7 @@ $("document").ready(function () {
 });
 
 function allowDrop(ev) {
-  if (!checkAllowDrop(ev)){
+  if (!checkAllowDrop(ev)) {
     return false
   }
 
@@ -162,11 +162,11 @@ function allowDrop(ev) {
 
 function drop(ev) {
   ev.preventDefault();
-  $(  ev.target).css({"border":""})
+  $(ev.target).css({"border": ""})
   var str = ev.dataTransfer.getData("value");
 
   data = str.split('|')
-  name=data[0]
+  name = data[0]
   tag = data[1]
   elems = `
     ${name} <p hidden>${tag}</p><div class="del" onclick="delLi(this)">删除</div><ul draggable="true">`
@@ -175,19 +175,15 @@ function drop(ev) {
     + setTagType()
     + setValue()
     + subTags()
-    +"</ul>"
-  switch (ev.target.className){
-    case "subTags":
-      let subTags = $(ev.target)
-      $(subTags.children()[0]).append(`<li> ${elems} </li>`);
-      break
-    case "tag-ul":
-      $(ev.target).append(`<li class="tag li-open"> ${elems} </li>`);
-    break;
-    default:
-      console.log(ev.target.className)
-  }
+    + "</ul>"
 
+  var classList = ev.target.classList
+  if (classList.contains("subTags")) {
+    let subTags = $(ev.target)
+    $(subTags.children()[0]).append(`<li> ${elems} </li>`);
+  } else if (classList.contains("tag-ul")) {
+    $(ev.target).append(`<li class="tag li-open"> ${elems} </li>`);
+  }
 
   ulChange()
 }
@@ -213,7 +209,6 @@ function ulChange() {
   }
 
   result = generateJson(lis)
-
   jsonDiv.val(JSON.stringify(result, null, 2));
 }
 
@@ -238,12 +233,12 @@ function generateJson(lis) {
     }
 
     switch (item.type) {
-    case "int":
-      item.value = parseInt(item.value,10)
+      case "int":
+        item.value = parseInt(item.value, 10)
         break;
       case "array":
-        if (item.value[0] === '['|| item.value[item.value.length - 1] === ']'){
-          item.value = item.value.substr(1, item.value.length-2).split(',')
+        if (item.value[0] === '[' || item.value[item.value.length - 1] === ']') {
+          item.value = item.value.substr(1, item.value.length - 2).split(',')
           break;
         }
         break;
@@ -254,7 +249,7 @@ function generateJson(lis) {
     li = $(fields[fieldIdx])
     subUl = $(li).children()[0]
     lis = $(subUl).children()
-    if (lis.length){
+    if (lis.length) {
       item.subTags = generateJson(lis)
     }
 
@@ -265,17 +260,17 @@ function generateJson(lis) {
 }
 
 function dragenter(ev) {
-  if (!checkAllowDrop(ev)){
+  if (!checkAllowDrop(ev)) {
     return false
   }
   ev.preventDefault();
-  $(  ev.target).css({"border":"solid red 1px"})
+  $(ev.target).css({"border": "solid red 1px"})
 }
 
 function dragleave(ev) {
   //ev.preventDefault();
 
-  $(  ev.target).css({"border":""})
+  $(ev.target).css({"border": ""})
 }
 
 function getLiTagFieldValue(li) {
@@ -283,11 +278,6 @@ function getLiTagFieldValue(li) {
 }
 
 function checkAllowDrop(ev) {
-  switch (ev.target.className){
-    case "subTags"  :
-    case "tag-ul":
-      return true
-    default:
-      return false;
-  }
+  var classList = ev.target.classList
+  return classList.contains("subTags") || classList.contains("tag-ul")
 }
