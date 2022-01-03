@@ -44,33 +44,34 @@ function getLogicRelation() {
 <li>逻辑关系
 <select name="logic">
 <option ></option>
-<option value="and">与</option>
-<option value="or"><</option>
+<option value="and">and</option>
+<option value="or">or</option>
 <option value="not">not</option>
 </select>
 </li>`;
 }
 
-function setCalculateSymbol() {
+function setCalculateSymbol(type) {
+  var lis ;
+  for (let symbol of typeSymbols[type]){
+    lis += `<option value="${symbol}">${symbol}</option>`
+  }
   return `
 <li>运算
 <select name="symbol">
-<option ></option>
-<option value=">">></option>
-<option value="<"><</option>
-<option value="=">=</option>
+<option ></option>${lis}
 </select>
 </li>`;
 }
 
-function setTagType() {
+function setTagType(type) {
   return `
 <li>数据类型
 <select name="type" >
-<option ></option>
-<option value="int">int</option>
-<option value="string">string</option>
-<option value="array">array</option>
+<!--<option ></option>-->
+<!--<option value="int">int</option>-->
+<!--<option value="string">string</option>-->
+<option value="${type}">${type}</option>
 </select>
 </li>`;
 }
@@ -83,50 +84,48 @@ function subTags() {
   return '<li class="subTags li-open">子规则<ul></ul></li>'
 }
 
+var types = ["int", "string", "array", "datetime", "timestamp", "enum"];
 var menu = [
   {
     "name": "个人信息",
     "tag": "userProfile",
     "id": 1,
     "sub": [{
-      "name": "爱好",
-      "tag": "hobby",
+      "name": "年龄",
+      "tag": "age",
       "id": 1,
+      "type": "int",
       "sub": [],
+    },
+      {
+      "name": "性别",
+      "tag": "gender",
+      "id": 2,
+      "type": "enum",
+        "sub": [],
     }, {
-      "name": "技能",
-      "tag": "skill",
-      "id": 1,
-      "sub": [],
-    },],
-  },
-  {
-    "name": "银行卡",
-    "tag": "bankCards",
-    "id": 2,
-    "sub": [
-      {
-        "name": "中国银行",
-        "tag": "chineseBank",
-        "id": 1,
+      "name": "城市",
+      "tag": "city",
+      "id": 3,
+      "type": "int",
         "sub": [],
-      },
+    },
 
-      {
-        "name": "北京银行",
-        "tag": "beijingBank",
-        "id": 1,
-        "sub": [],
-      }
     ],
   },
   {
-    "name": "居住地",
-    "tag": "address",
-    "id": 1,
+    "name": "爱好",
+    "tag": "hobby",
+    "id": 4,
+    "type":"array",
     "sub": [],
   }
 ];
+var typeSymbols = {
+  "int":[">",">=","=","<=","<"],
+  "string":["=","!=","contains","in","not in"],
+  "array":["in","not in","=","!="]
+}
 
 function setTags(menu, ele) {
   if (!menu || menu.length === 0) {
@@ -135,7 +134,7 @@ function setTags(menu, ele) {
 
   for (node of menu) {
     if (node.sub.length === 0) {
-      ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='${node.name}|${node.tag}'><i class=""></i><span>${node.name}</span></span></li>`)
+      ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='${node.name}|${node.tag}|${node.type}'><i class=""></i><span>${node.name}</span></span></li>`)
       continue
     } else {
       ele.append(`<li class="li-dir unselectable"> ${node.name} </li>`)
@@ -168,11 +167,12 @@ function drop(ev) {
   data = str.split('|')
   name = data[0]
   tag = data[1]
+  type = data[2]
   elems = `
     ${name} <p hidden>${tag}</p><div class="del" onclick="delLi(this)">删除</div><ul draggable="true">`
     + getLogicRelation()
-    + setCalculateSymbol()
-    + setTagType()
+    + setCalculateSymbol(type)
+    + setTagType(type)
     + setValue()
     + subTags()
     + "</ul>"
