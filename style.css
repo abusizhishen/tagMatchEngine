@@ -5,7 +5,7 @@ html,body{
 }
 
 #head{
-  height:15%;
+  height:10%;
   color:gray;
   border:1px solid;
   text-align:center;
@@ -77,13 +77,6 @@ html,body{
 
 }
 
-.li-dir {
-  list-style-type: none;
-  background: url("icon/dir.png") no-repeat 0rem 0.2rem;
-  background-size: 1rem 1rem;
-  text-indent: 2em;
-}
-
 ul {
   list-style:square inside;
 }
@@ -117,3 +110,24 @@ ul {
 ul > li{
   padding:3px;
 }
+
+.li-dir {
+  list-style-type: none;
+  background: url("icon/dir.png") no-repeat 0rem 0.2rem;
+  background-size: 1rem 1rem;
+  text-indent: 1em;
+}
+
+.li-open {
+  list-style-type: none;
+  background: url("icon/open.png") no-repeat 0rem 0.2rem;
+  background-size: 1rem 1rem;
+  text-indent: 1em;
+}
+
+.li-close {
+   list-style-type: none;
+   background: url("icon/close.png") no-repeat 0rem 0.2rem;
+   background-size: 1rem 1rem;
+   text-indent: 1em;
+ }

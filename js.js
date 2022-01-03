@@ -14,9 +14,11 @@ $(document).on('click', 'li', function () {
   switch (children[0].tagName) {
     case "P":
       $(children[2]).toggle()
+      ulOpenOrClose(this)
       break;
     case "UL":
       $(children[0]).toggle()
+      ulOpenOrClose(this)
       break
     default:
       console.log(children[0].tagName)
@@ -24,6 +26,17 @@ $(document).on('click', 'li', function () {
 
   return false
 })
+
+function ulOpenOrClose(target) {
+  console.log(target.classList)
+  if (target.classList.contains("li-open")){
+    target.classList.remove("li-open")
+    target.classList.add("li-close")
+  }else{
+    target.classList.remove("li-close")
+    target.classList.add("li-open")
+  }
+}
 
 
 function getLogicRelation() {
@@ -67,7 +80,7 @@ function setValue(){
 }
 
 function subTags(){
-  return '<li class="subTags">子规则<ul></ul></li>'
+  return '<li class="subTags li-open">子规则<ul></ul></li>'
 }
 
 var menu = [
@@ -169,7 +182,7 @@ function drop(ev) {
       $(subTags.children()[0]).append(`<li> ${elems} </li>`);
       break
     case "tag-ul":
-      $(ev.target).append(`<li class="tag"> ${elems} </li>`);
+      $(ev.target).append(`<li class="tag li-open"> ${elems} </li>`);
     break;
     default:
       console.log(ev.target.className)
@@ -199,12 +212,12 @@ function ulChange() {
     return
   }
 
-  result = getChildrenTags(lis)
+  result = generateJson(lis)
 
   jsonDiv.val(JSON.stringify(result, null, 2));
 }
 
-function getChildrenTags(lis) {
+function generateJson(lis) {
   var result = [];
 
   for (i = 0; i < lis.length; i++) {
@@ -224,11 +237,25 @@ function getChildrenTags(lis) {
       subTags: []
     }
 
+    switch (item.type) {
+    case "int":
+      item.value = parseInt(item.value,10)
+        break;
+      case "array":
+        if (item.value[0] === '['|| item.value[item.value.length - 1] === ']'){
+          item.value = item.value.substr(1, item.value.length-2).split(',')
+          break;
+        }
+        break;
+      default:
+
+    }
+
     li = $(fields[fieldIdx])
     subUl = $(li).children()[0]
     lis = $(subUl).children()
     if (lis.length){
-      item.subTags = getChildrenTags(lis)
+      item.subTags = generateJson(lis)
     }
 
     result.push(item)
