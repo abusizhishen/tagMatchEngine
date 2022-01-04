@@ -6,7 +6,6 @@ $(document).on('click', 'li', function () {
   }
 
   var children = $(this).children()
-  //console.log(this.innerText)
   if (children.length === 0) {
     return false;
   }
@@ -53,6 +52,10 @@ function getLogicRelation() {
 
 function setCalculateSymbol(type) {
   var lis ;
+  if (!typeSymbols[type]){
+    alert("无效的类型: "+ type)
+    return
+  }
   for (let symbol of typeSymbols[type]){
     lis += `<option value="${symbol}">${symbol}</option>`
   }
@@ -148,7 +151,7 @@ function setTags(menu, ele) {
 }
 
 $("document").ready(function () {
-  setTags(menu, $("#left ul"))
+  setTags(menu, $("#menu ul"))
 });
 
 function allowDrop(ev) {
@@ -159,7 +162,17 @@ function allowDrop(ev) {
   ev.preventDefault();
 }
 
+function allowDrag(ev){
+  console.log(111)
+  if (!checkAllowDrag(ev)) {
+    return false
+  }
+
+  ev.preventDefault();
+}
+
 function drop(ev) {
+  console.log(222)
   ev.preventDefault();
   $(ev.target).css({"border": ""})
   var str = ev.dataTransfer.getData("value");
@@ -169,7 +182,7 @@ function drop(ev) {
   tag = data[1]
   type = data[2]
   elems = `
-    ${name} <p hidden>${tag}</p><div class="del" onclick="delLi(this)">删除</div><ul draggable="true">`
+    <span draggable="false" ondragstart="allowDrag(event)">${name}</span> <span hidden>${tag}</span><span class="del" draggable="false" onclick="delLi(this)">删除</span><ul draggable="true">`
     + getLogicRelation()
     + setCalculateSymbol(type)
     + setTagType(type)
@@ -180,18 +193,25 @@ function drop(ev) {
   var classList = ev.target.classList
   if (classList.contains("subTags")) {
     let subTags = $(ev.target)
-    $(subTags.children()[0]).append(`<li> ${elems} </li>`);
+    $(subTags.children()[0]).append(`<li draggable="true" class="tag"> ${elems} </li>`);
   } else if (classList.contains("tag-ul")) {
-    $(ev.target).append(`<li class="tag li-open"> ${elems} </li>`);
+    $(ev.target).append(`<li class="tag li-open" draggable="true"> ${elems} </li>`);
   }
 
   ulChange()
 }
 
 function drag(ev) {
+  if (ev.target.classList.contains("tag")){
+    console.log(ev.target.className,ev.target.id)
+    return
+  }
+  console.log(ev.target.tagName,ev.target.className,ev.target.id)
+
   value = $(ev.target).attr("data-value");
+  console.log(value)
+
   ev.dataTransfer.setData("value", value);
-  //ev.dataTransfer.setDragImage(image, xOffset, yOffset);
 }
 
 
@@ -201,7 +221,7 @@ function delLi(ele) {
 }
 
 function ulChange() {
-  var jsonDiv = $("#json")
+  var jsonDiv = $("textarea")
   var lis = $(".tag-ul").children()
   if (!lis) {
     jsonDiv.value = '[]'
@@ -209,6 +229,7 @@ function ulChange() {
   }
 
   result = generateJson(lis)
+  console.log(result)
   jsonDiv.val(JSON.stringify(result, null, 2));
 }
 
@@ -218,8 +239,8 @@ function generateJson(lis) {
   for (i = 0; i < lis.length; i++) {
     li = $(lis[i])
     children = li.children()
-    var tag = children[0].innerText
-    var ul = children[2]
+    var tag = children[1].innerText
+    var ul = children[3]
     var fields = $(ul).children()
     var fieldIdx = 0
 
@@ -280,4 +301,20 @@ function getLiTagFieldValue(li) {
 function checkAllowDrop(ev) {
   var classList = ev.target.classList
   return classList.contains("subTags") || classList.contains("tag-ul")
+}
+
+let notAllowedDragClass = ["symbol", "type", "value", "logic"];
+let notAllowedDragElement = ["SPAN", "INPUT", "value", "logic"];
+
+function checkAllowDrag(ev) {
+  return ev.target.tagName !== "SPAN";
+
+
+  var classList = ev.target.classList
+  for (className of notAllowedDragClass){
+    if (classList.contains(className)){
+      return false;
+    }
+  }
+  return  true
 }

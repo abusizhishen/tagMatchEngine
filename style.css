@@ -1,5 +1,3 @@
-
-
 html,body{
   height:100%;
 }
@@ -7,42 +5,34 @@ html,body{
 #head{
   height:10%;
   color:gray;
-  border:1px solid;
   text-align:center;
 }
 
 #container{
   height:72%;
-  color:blueviolet;
-  /*border:1px solid;*/
+  color:black;
   margin:1% auto;
   padding:0;
   position:relative;
+  display:flex;
+  justify-content: space-between;
+}
+
+#menu{
+  height:100%;
+  flex:1;
+}
+
+#tag , #json{
+  height:100%;
+  flex:3;
+  overflow:auto;
 }
 
 #footer{
   height:10%;
   color:pink;
   bottom:0;
-  /*border:1px solid;*/
-}
-
-#left{
-  float:left;
-  border:1px solid;
-  left:0;
-  height:100%;
-  width:20%;
-}
-
-#right{
-  float:right;
-  border:1px solid;
-  right:0;
-  color:black;
-  height:100%;
-  width:78%;
-  display:flex;
 }
 
 .sidebar {
@@ -50,32 +40,7 @@ html,body{
   z-index: 100;
 }
 
-.tagBody {
-  height:100%;
-  width:60%;
-  /*background-color: greenyellow;*/
-  border:1px solid;
-  flex:2
-}
 
-#showJson{
-  height:100%;
-  width:auto;
-  /*background-color: navajowhite;*/
-  /*border:1px solid;*/
-  flex:1 ;
-  overflow:auto;
-
-}
-
-#json{
-  /*background-color: navajowhite;*/
-  /*border:1px solid;*/
-  height:100%;
-  width: 100%;
-  overflow:auto;
-
-}
 
 ul {
   list-style:square inside;
@@ -83,7 +48,6 @@ ul {
 
 .del{
   border:1px solid black;
-  display: inline-block;
 }
 
 .item{
@@ -95,8 +59,6 @@ ul {
   width:94%;
   height:90%;
   overflow:auto;
-
-  /*padding:10px;*/
 }
 
 .unselectable {
@@ -123,8 +85,6 @@ li{
   text-indent: 1em;
 }
 
-
-
 .li-open {
   list-style-type: none;
   background: url("icon/open.png") no-repeat 0rem 0.2rem;
@@ -138,3 +98,16 @@ li{
    background-size: 1rem 1rem;
    text-indent: 1em;
  }
+
+textarea{
+  width:100%;
+  height:100%;
+}
+
+div{
+  border:1px solid gray;
+}
+
+.tag-drag{
+  border:1px solid
+}

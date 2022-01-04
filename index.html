@@ -11,11 +11,10 @@
 <div id="head">标签匹配引擎</div>
 
 <div id="container">
-  <div id="left">
+  <div id="menu">
     <ul></ul>
   </div>
-  <div id="right">
-    <div class="tagBody" wrap="off">
+  <div id="tag">
       <ul class="tag-ul" wrap="off"
           ondrop="drop(event)"
           ondragover="allowDrop(event)"
@@ -23,11 +22,9 @@
           ondragenter="dragenter(event)"
           ondragleave="dragleave(event)"
       ></ul>
-    </div>
-    <div id="showJson">
-      <textarea disabled  id="json" wrap="off"></textarea>
-
-    </div>
+  </div>
+  <div id="json">
+    <textarea disabled wrap="off"></textarea>
   </div>
 </div>
 <div id="footer">footer</div>
