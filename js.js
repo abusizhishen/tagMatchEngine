@@ -26,6 +26,22 @@ $(document).on('click', 'li', function () {
   return false
 })
 
+let notAllowedDragClass = ["symbol", "type", "value", "logic"];
+let notAllowedDragElement = ["SPAN", "INPUT", "value", "logic"];
+$(document).on('dragstart',function (ev) {
+  let id;
+  switch (ev.target.tagName) {
+    case "LI":
+      id = ev.target.id;
+      break;
+    case "SPAN":
+    case "UL":
+      id = ev.target.parentElement.id;
+      break;
+  }
+  ev.originalEvent.dataTransfer.setData("id",id)
+})
+
 function ulOpenOrClose(target) {
   console.log(target.classList)
   if (target.classList.contains("li-open")) {
@@ -137,7 +153,7 @@ function setTags(menu, ele) {
 
   for (node of menu) {
     if (node.sub.length === 0) {
-      ele.append(`<li draggable="true" ondragstart="drag(event)" data-value='${node.name}|${node.tag}|${node.type}'><i class=""></i><span>${node.name}</span></span></li>`)
+      ele.append(`<li draggable="true" class="menu" id="${getUniqueID()}" data-value='${node.name}|${node.tag}|${node.type}'><i class=""></i><span>${node.name}</span></span></li>`)
       continue
     } else {
       ele.append(`<li class="li-dir unselectable"> ${node.name} </li>`)
@@ -172,17 +188,30 @@ function allowDrag(ev){
 }
 
 function drop(ev) {
-  console.log(222)
   ev.preventDefault();
   $(ev.target).css({"border": ""})
-  var str = ev.dataTransfer.getData("value");
+  var id = ev.dataTransfer.getData("id");
 
+  console.log("drop ")
+
+  let originalElement = document.getElementById(id)
+  if (originalElement.className !== "menu"){
+    if (ev.target.className === "tag-ul"){
+      ev.target.append(originalElement)
+    }else{
+      ev.target.children[0].append(originalElement)
+    }
+
+    return
+  }
+
+  var str = originalElement.getAttribute("data-value")
   data = str.split('|')
   name = data[0]
   tag = data[1]
   type = data[2]
   elems = `
-    <span draggable="false" ondragstart="allowDrag(event)">${name}</span> <span hidden>${tag}</span><span class="del" draggable="false" onclick="delLi(this)">删除</span><ul draggable="true">`
+    <span draggable="false">${name}</span> <span hidden>${tag}</span><span class="del" draggable="false" onclick="delLi(this)">删除</span><ul draggable="true">`
     + getLogicRelation()
     + setCalculateSymbol(type)
     + setTagType(type)
@@ -193,26 +222,26 @@ function drop(ev) {
   var classList = ev.target.classList
   if (classList.contains("subTags")) {
     let subTags = $(ev.target)
-    $(subTags.children()[0]).append(`<li draggable="true" class="tag"> ${elems} </li>`);
+    $(subTags.children()[0]).append(`<li draggable="true" id="${getUniqueID()}" class="tag"> ${elems} </li>`);
   } else if (classList.contains("tag-ul")) {
-    $(ev.target).append(`<li class="tag li-open" draggable="true"> ${elems} </li>`);
+    $(ev.target).append(`<li class="tag li-open" draggable="true" id="${getUniqueID()}"> ${elems} </li>`);
   }
 
   ulChange()
 }
 
-function drag(ev) {
-  if (ev.target.classList.contains("tag")){
-    console.log(ev.target.className,ev.target.id)
-    return
-  }
-  console.log(ev.target.tagName,ev.target.className,ev.target.id)
-
-  value = $(ev.target).attr("data-value");
-  console.log(value)
-
-  ev.dataTransfer.setData("value", value);
-}
+// function drag(ev) {
+//   if (ev.target.classList.contains("tag")){
+//     console.log(ev.target.className,ev.target.id)
+//     return
+//   }
+//   console.log(ev.target.tagName,ev.target.className,ev.target.id)
+//
+//   value = $(ev.target).attr("data-value");
+//   console.log(value)
+//
+//   ev.dataTransfer.setData("value", value);
+// }
 
 
 function delLi(ele) {
@@ -303,18 +332,8 @@ function checkAllowDrop(ev) {
   return classList.contains("subTags") || classList.contains("tag-ul")
 }
 
-let notAllowedDragClass = ["symbol", "type", "value", "logic"];
-let notAllowedDragElement = ["SPAN", "INPUT", "value", "logic"];
-
-function checkAllowDrag(ev) {
-  return ev.target.tagName !== "SPAN";
-
-
-  var classList = ev.target.classList
-  for (className of notAllowedDragClass){
-    if (classList.contains(className)){
-      return false;
-    }
-  }
-  return  true
+var uniqueID = 0
+function getUniqueID() {
+  uniqueID++
+  return "id_"+uniqueID.toString()
 }
