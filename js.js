@@ -19,6 +19,9 @@ $(document).on('click', 'li', function () {
       $(children[0]).toggle()
       ulOpenOrClose(this)
       break
+    case "SPAN":
+      $(children[3]).toggle()
+      break
     default:
       console.log(children[0].tagName)
   }
@@ -192,8 +195,6 @@ function drop(ev) {
   $(ev.target).css({"border": ""})
   var id = ev.dataTransfer.getData("id");
 
-  console.log("drop ")
-
   let originalElement = document.getElementById(id)
   if (originalElement.className !== "menu"){
     if (ev.target.className === "tag-ul"){
@@ -201,7 +202,7 @@ function drop(ev) {
     }else{
       ev.target.children[0].append(originalElement)
     }
-
+    ulChange()
     return
   }
 
@@ -222,7 +223,7 @@ function drop(ev) {
   var classList = ev.target.classList
   if (classList.contains("subTags")) {
     let subTags = $(ev.target)
-    $(subTags.children()[0]).append(`<li draggable="true" id="${getUniqueID()}" class="tag"> ${elems} </li>`);
+    $(subTags.children()[0]).append(`<li draggable="true" id="${getUniqueID()}" class="tag li-open"> ${elems} </li>`);
   } else if (classList.contains("tag-ul")) {
     $(ev.target).append(`<li class="tag li-open" draggable="true" id="${getUniqueID()}"> ${elems} </li>`);
   }
@@ -250,6 +251,7 @@ function delLi(ele) {
 }
 
 function ulChange() {
+  console.log("tag change")
   var jsonDiv = $("textarea")
   var lis = $(".tag-ul").children()
   if (!lis) {
@@ -266,8 +268,8 @@ function generateJson(lis) {
   var result = [];
 
   for (i = 0; i < lis.length; i++) {
-    li = $(lis[i])
-    children = li.children()
+    var li = $(lis[i])
+    var children = li.children()
     var tag = children[1].innerText
     var ul = children[3]
     var fields = $(ul).children()
@@ -296,11 +298,11 @@ function generateJson(lis) {
 
     }
 
-    li = $(fields[fieldIdx])
-    subUl = $(li).children()[0]
-    lis = $(subUl).children()
-    if (lis.length) {
-      item.subTags = generateJson(lis)
+    subLi = $(fields[fieldIdx])
+    var subUl = $(subLi).children()[0]
+    var subLis = $(subUl).children()
+    if (subLis.length) {
+      item.subTags = generateJson(subLis)
     }
 
     result.push(item)
@@ -318,8 +320,6 @@ function dragenter(ev) {
 }
 
 function dragleave(ev) {
-  //ev.preventDefault();
-
   $(ev.target).css({"border": ""})
 }
 
