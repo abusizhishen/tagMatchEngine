@@ -267,7 +267,7 @@ function ulChange() {
 function generateJson(lis) {
   var result = [];
 
-  for (i = 0; i < lis.length; i++) {
+  for (var i = 0; i < lis.length; i++) {
     var li = $(lis[i])
     var children = li.children()
     var tag = children[1].innerText
@@ -298,7 +298,7 @@ function generateJson(lis) {
 
     }
 
-    subLi = $(fields[fieldIdx])
+    var subLi = $(fields[fieldIdx])
     var subUl = $(subLi).children()[0]
     var subLis = $(subUl).children()
     if (subLis.length) {
