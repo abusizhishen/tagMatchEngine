@@ -10,27 +10,25 @@ $(document).on('click', 'li', function () {
     return false;
   }
 
-  switch (children[0].tagName) {
-    case "P":
-      $(children[2]).toggle()
-      ulOpenOrClose(this)
-      break;
-    case "UL":
-      $(children[0]).toggle()
-      ulOpenOrClose(this)
-      break
-    case "SPAN":
-      $(children[3]).toggle()
-      break
-    default:
-      console.log(children[0].tagName)
-  }
+  // switch (children[0].tagName) {
+  //   case "P":
+  //     $(children[2]).toggle()
+  //     ulOpenOrClose(this)
+  //     break;
+  //   case "UL":
+  //     $(children[0]).toggle()
+  //     ulOpenOrClose(this)
+  //     break
+  //   case "SPAN":
+  //     $(children[3]).toggle()
+  //     break
+  //   default:
+  //     console.log(children[0].tagName)
+  // }
 
   return false
 })
 
-let notAllowedDragClass = ["symbol", "type", "value", "logic"];
-let notAllowedDragElement = ["SPAN", "INPUT", "value", "logic"];
 $(document).on('dragstart',function (ev) {
   let id;
   switch (ev.target.tagName) {
@@ -59,14 +57,12 @@ function ulOpenOrClose(target) {
 
 function getLogicRelation() {
   return `
-<li>逻辑关系
 <select name="logic">
-<option ></option>
-<option value="and">and</option>
-<option value="or">or</option>
-<option value="not">not</option>
-</select>
-</li>`;
+<option >逻辑关系</option>
+<option value="and">与</option>
+<option value="or">或</option>
+<option value="not">非</option>
+</select>`;
 }
 
 function setCalculateSymbol(type) {
@@ -79,32 +75,29 @@ function setCalculateSymbol(type) {
     lis += `<option value="${symbol}">${symbol}</option>`
   }
   return `
-<li>运算
+
 <select name="symbol">
-<option ></option>${lis}
-</select>
-</li>`;
+<option >运算</option>${lis}
+</select>`;
 }
 
-function setTagType(type) {
+function setTagType() {
   return `
-<li>数据类型
 <select name="type" >
-<!--<option ></option>-->
-<!--<option value="int">int</option>-->
-<!--<option value="string">string</option>-->
-<option value="${type}">${type}</option>
-</select>
-</li>`;
+<option >数据类型</option>
+<option value="int">number</option>
+<option value="string">字符串</option>
+<option value="array">数组</option>
+</select>`;
 }
 
 function setValue() {
-  return '<li class="value">值<input type="text"></li>'
+  return '值<input type="text" name="value">'
 }
 
-function subTags() {
-  return '<li class="subTags li-open">子规则<ul></ul></li>'
-}
+// function subTags() {
+//   return '<li class="subTags li-open">子规则<ul></ul></li>'
+// }
 
 var types = ["int", "string", "array", "datetime", "timestamp", "enum"];
 var menu = [
@@ -123,7 +116,7 @@ var menu = [
       "name": "性别",
       "tag": "gender",
       "id": 2,
-      "type": "enum",
+      "type": "int",
         "sub": [],
     }, {
       "name": "城市",
@@ -146,7 +139,7 @@ var menu = [
 var typeSymbols = {
   "int":[">",">=","=","<=","<"],
   "string":["=","!=","contains","in","not in"],
-  "array":["in","not in","=","!="]
+  "array":["in","not in","=","!="],
 }
 
 function setTags(menu, ele) {
@@ -181,15 +174,6 @@ function allowDrop(ev) {
   ev.preventDefault();
 }
 
-function allowDrag(ev){
-  console.log(111)
-  if (!checkAllowDrag(ev)) {
-    return false
-  }
-
-  ev.preventDefault();
-}
-
 function drop(ev) {
   ev.preventDefault();
   $(ev.target).css({"border": ""})
@@ -212,13 +196,14 @@ function drop(ev) {
   tag = data[1]
   type = data[2]
   elems = `
-    <span draggable="false">${name}</span> <span hidden>${tag}</span><span class="del" draggable="false" onclick="delLi(this)">删除</span><ul draggable="true">`
+    <span draggable="false">${name}</span> <span hidden class="tagName">${tag}</span>`
     + getLogicRelation()
     + setCalculateSymbol(type)
-    + setTagType(type)
+    + setTagType()
     + setValue()
-    + subTags()
-    + "</ul>"
+    // + subTags()
+    + `<span class="del" draggable="false" onclick="delLi(this)">删除</span>`
+
 
   var classList = ev.target.classList
   if (classList.contains("subTags")) {
@@ -230,20 +215,6 @@ function drop(ev) {
 
   ulChange()
 }
-
-// function drag(ev) {
-//   if (ev.target.classList.contains("tag")){
-//     console.log(ev.target.className,ev.target.id)
-//     return
-//   }
-//   console.log(ev.target.tagName,ev.target.className,ev.target.id)
-//
-//   value = $(ev.target).attr("data-value");
-//   console.log(value)
-//
-//   ev.dataTransfer.setData("value", value);
-// }
-
 
 function delLi(ele) {
   $(ele).parent().remove()
@@ -269,18 +240,13 @@ function generateJson(lis) {
 
   for (var i = 0; i < lis.length; i++) {
     var li = $(lis[i])
-    var children = li.children()
-    var tag = children[1].innerText
-    var ul = children[3]
-    var fields = $(ul).children()
-    var fieldIdx = 0
 
     var item = {
-      tag: tag,
-      logic: getLiTagFieldValue(fields[fieldIdx++]),
-      symbol: getLiTagFieldValue(fields[fieldIdx++]),
-      type: getLiTagFieldValue(fields[fieldIdx++]),
-      value: getLiTagFieldValue(fields[fieldIdx++]),
+      tag: li.children(".tagName")[0].innerHTML,
+      logic: li.children("[name='logic']")[0].value,
+      symbol: li.children("[name='symbol']")[0].value,
+      type: li.children("[name='type']")[0].value,
+      value: li.children("[name='value']")[0].value,
       subTags: []
     }
 
@@ -298,12 +264,10 @@ function generateJson(lis) {
 
     }
 
-    var subLi = $(fields[fieldIdx])
-    var subUl = $(subLi).children()[0]
-    var subLis = $(subUl).children()
-    if (subLis.length) {
-      item.subTags = generateJson(subLis)
-    }
+
+    // if (subLis.length) {
+    //   item.subTags = generateJson(subLis)
+    // }
 
     result.push(item)
   }
