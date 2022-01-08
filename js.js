@@ -84,7 +84,7 @@ function setCalculateSymbol(type) {
 function setTagType() {
   return `
 <select name="type" >
-<option >数据类型</option>
+<option >类型</option>
 <option value="int">number</option>
 <option value="string">字符串</option>
 <option value="array">数组</option>
@@ -92,12 +92,8 @@ function setTagType() {
 }
 
 function setValue() {
-  return '值<input type="text" name="value">'
+  return '<input type="text" name="value" placeholder="值">'
 }
-
-// function subTags() {
-//   return '<li class="subTags li-open">子规则<ul></ul></li>'
-// }
 
 var types = ["int", "string", "array", "datetime", "timestamp", "enum"];
 var menu = [
@@ -196,7 +192,7 @@ function drop(ev) {
   tag = data[1]
   type = data[2]
   elems = `
-    <span draggable="false">${name}</span> <span hidden class="tagName">${tag}</span>`
+    <div draggable="false" class="tag-text" >${name}</div> <span hidden class="tagName">${tag}</span>`
     + getLogicRelation()
     + setCalculateSymbol(type)
     + setTagType()

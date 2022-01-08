@@ -23,9 +23,15 @@ html,body{
   flex:1;
 }
 
-#tag , #json{
+#tag {
   height:100%;
   flex:3;
+  overflow:auto;
+}
+
+#json{
+  height:100%;
+  flex:2;
   overflow:auto;
 }
 
@@ -48,6 +54,7 @@ ul {
 
 .del{
   border:1px solid black;
+  /*margin-left: -2%;*/
 }
 
 .item{
@@ -110,4 +117,17 @@ div{
 
 .tag-drag{
   border:1px solid
+}
+
+.tag-text{
+  color:#5583F0;
+  background-color: #ECF2FE;
+  /*padding-left: 10px;*/
+  padding-right: 10px;
+}
+
+.tag{
+  display:flex;
+  width:90%;
+  justify-content:space-between;
 }
